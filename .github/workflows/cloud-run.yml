@@ -17,14 +17,22 @@ jobs:
 
         steps:
             - name: Checkout
-              uses: actions/checkout@v4  # Updated to latest version
+              uses: actions/checkout@v4
 
-            # Setup gcloud CLI using the correct GitHub Action
-            - uses: google-github-actions/setup-gcloud@v1
+            # Authenticate and set up gcloud
+            - name: Authenticate gcloud
+              uses: google-github-actions/auth@v1
+              with:
+                  credentials_json: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+
+            - name: Set up gcloud SDK
+              uses: google-github-actions/setup-gcloud@v1
               with:
                   project_id: ${{ secrets.PROJECT_ID }}
-                  service_account_email: ${{ secrets.SA_EMAIL }}
-                  service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+
+            # Ensure authentication is active
+            - name: Verify Authentication
+              run: gcloud auth list
 
             # Configure gcloud CLI
             - name: gcloud Set up
